@@ -47,9 +47,11 @@ $env:PYTHONIOENCODING="utf-8"
 
 ```powershell
 cd <项目根目录>
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install mujoco==3.2.2 numpy scipy opencv-python matplotlib pillow pytest
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
+
+依赖版本锁定在 `requirements.txt`（MuJoCo 3.2.2 等），与下表一致。
 
 ---
 

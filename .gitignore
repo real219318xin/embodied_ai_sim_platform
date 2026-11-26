@@ -42,3 +42,10 @@ desktop.ini
 results/net/
 /tmp/
 *.tmp
+
+# 论文手稿与个人文档：不进入版本库
+*.docx
+*.doc
+*.pdf
+~$*
+
