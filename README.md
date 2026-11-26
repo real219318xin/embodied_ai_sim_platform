@@ -25,8 +25,9 @@
 命令行等价形式（PowerShell）：
 
 ```powershell
+cd <项目根目录>          # 例如 G:\embodied_ai_sim_platform
 $env:PYTHONIOENCODING="utf-8"
-D:\oyx\embodied_ai_sim_platform.venv\Scripts\python.exe D:\oyx\embodied_ai_sim_platform\scripts\viewer_demo.py
+.\.venv\Scripts\python.exe .\scripts\viewer_demo.py
 ```
 
 ---
@@ -36,7 +37,7 @@ D:\oyx\embodied_ai_sim_platform.venv\Scripts\python.exe D:\oyx\embodied_ai_sim_p
 | 项 | 值 |
 | --- | --- |
 | 操作系统 | Windows 11 (26200) |
-| Python | 3.11.9，独立虚拟环境 `D:\oyx\embodied_ai_sim_platform.venv` |
+| Python | 3.11.9，独立虚拟环境 `<项目根目录>\.venv` |
 | 物理引擎 | **MuJoCo 3.2.2**（锁定版本，原因见 §9） |
 | 依赖 | numpy 2.4.6 / scipy 1.17.1 / opencv-python 5.0.0 / matplotlib 3.11.2 / Pillow / pytest |
 | 机型 | i5-13490F / 15.8 GB RAM / GTX 1050 Ti 4 GB |
@@ -45,8 +46,9 @@ D:\oyx\embodied_ai_sim_platform.venv\Scripts\python.exe D:\oyx\embodied_ai_sim_p
 重建虚拟环境：
 
 ```powershell
-python -m venv D:\oyx\embodied_ai_sim_platform.venv
-D:\oyx\embodied_ai_sim_platform.venv\Scripts\python.exe -m pip install mujoco==3.2.2 numpy scipy opencv-python matplotlib pillow pytest
+cd <项目根目录>
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install mujoco==3.2.2 numpy scipy opencv-python matplotlib pillow pytest
 ```
 
 ---
@@ -225,8 +227,8 @@ embodied_ai_sim_platform/
 
 ```powershell
 $env:PYTHONIOENCODING="utf-8"
-$PY = "D:\oyx\embodied_ai_sim_platform.venv\Scripts\python.exe"
-$R  = "D:\oyx\embodied_ai_sim_platform"
+$PY = ".\.venv\Scripts\python.exe"    # 在项目根目录下执行
+$R  = "."
 
 & $PY "$R\scripts\viewer_demo.py"                        # 可视化实时演示
 & $PY "$R\scripts\run_instruction.py"                    # 指令驱动全链路（默认指令）

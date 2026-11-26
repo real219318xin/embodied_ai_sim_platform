@@ -98,7 +98,7 @@
 <table>
   <tr><th>项</th><th>值</th></tr>
   <tr><td>操作系统</td><td>Windows 11 (26200)</td></tr>
-  <tr><td>Python</td><td>3.11.9，独立虚拟环境 <code>D:\oyx\embodied_ai_sim_platform.venv</code></td></tr>
+  <tr><td>Python</td><td>3.11.9，独立虚拟环境 <code>&lt;项目根目录&gt;\.venv</code></td></tr>
   <tr><td>物理引擎</td><td><b>MuJoCo 3.2.2</b>（锁定版本）</td></tr>
   <tr><td>依赖</td><td>numpy 2.4.6 / scipy 1.17.1 / opencv-python 5.0.0 / matplotlib 3.11.2 / Pillow / pytest</td></tr>
   <tr><td>硬件</td><td>i5-13490F / 15.8 GB RAM / GTX 1050 Ti 4 GB</td></tr>
@@ -276,8 +276,8 @@
 
 <h2>9. 复现命令</h2>
 <pre><code>$env:PYTHONIOENCODING="utf-8"
-$PY = "D:\oyx\embodied_ai_sim_platform.venv\Scripts\python.exe"
-$R  = "D:\oyx\embodied_ai_sim_platform"
+$PY = ".\.venv\Scripts\python.exe"
+$R  = "."
 
 &amp; $PY "$R\scripts\viewer_demo.py"                        # 可视化实时演示
 &amp; $PY "$R\scripts\run_instruction.py"                    # 指令驱动全链路
