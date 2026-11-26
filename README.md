@@ -39,7 +39,7 @@ $env:PYTHONIOENCODING="utf-8"
 | 操作系统 | Windows 11 (26200) |
 | Python | 3.11.9，独立虚拟环境 `<项目根目录>\.venv` |
 | 物理引擎 | **MuJoCo 3.2.2**（锁定版本，原因见 §9） |
-| 依赖 | numpy 2.4.6 / scipy 1.17.1 / opencv-python 5.0.0 / matplotlib 3.11.2 / Pillow / pytest |
+| 依赖 | numpy 2.4.6 / scipy 1.17.1 / opencv-python 5.0.0.93 / matplotlib 3.11.2 / Pillow 13.0.0 / pytest（见 `requirements.txt`） |
 | 机型 | i5-13490F / 15.8 GB RAM / GTX 1050 Ti 4 GB |
 | 机器人模型 | MuJoCo Menagerie `franka_emika_panda`（原文件未修改，36.5 MB，逐文件 SHA1 校验） |
 
