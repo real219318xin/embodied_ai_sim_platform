@@ -1,0 +1,11 @@
+{
+  "generated_file": "scenes/robot/panda_robot.xml",
+  "source_file": "assets/mujoco_menagerie/franka_emika_panda/panda.xml",
+  "source_sha256": "96ad67da03710f17f798c9478fd9e9efdf24a3bf8359f05e456dd9fb158ea273",
+  "generated_sha256": "bc7f96e3ef0148edd68bb130900d1018f9cc38ba90c556f72d8b5db9fb8a6b35",
+  "diff": [
+    "removed <keyframe> block",
+    "link0 pos 0 0 0.42 (robot mounted on bench surface)"
+  ],
+  "removed_block_len": 145
+}

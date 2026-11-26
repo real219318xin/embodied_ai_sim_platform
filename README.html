@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>具身智能机器人仿真平台 · MuJoCo + Franka Panda</title>
+<style>
+  :root{
+    --bg:#0f1216; --panel:#161b22; --panel2:#1c232c; --line:#2a3441;
+    --fg:#e6edf3; --muted:#9aa7b4; --accent:#4aa3ff; --ok:#3fb950;
+    --warn:#d29922; --bad:#f85149; --code:#0b0f14;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:16px/1.75 "Microsoft YaHei","PingFang SC","Segoe UI",system-ui,sans-serif}
+  .wrap{max-width:1060px;margin:0 auto;padding:36px 22px 90px}
+  header.hero{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:26px}
+  h1{font-size:30px;margin:0 0 8px;letter-spacing:.5px}
+  h1 small{display:block;font-size:15px;color:var(--muted);font-weight:400;margin-top:8px;letter-spacing:0}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .badge{background:var(--panel2);border:1px solid var(--line);border-radius:999px;
+         padding:4px 12px;font-size:13px;color:var(--muted)}
+  .badge b{color:var(--fg);font-weight:600}
+  h2{font-size:22px;margin:44px 0 14px;padding-left:12px;border-left:4px solid var(--accent)}
+  h3{font-size:17px;margin:26px 0 10px;color:#c9d6e2}
+  p{color:#cfd8e3}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px}
+  th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:#dbe6f2;font-weight:600;white-space:nowrap}
+  tr:nth-child(even) td{background:#12171d}
+  code{background:var(--code);border:1px solid var(--line);border-radius:5px;
+       padding:1px 6px;font-family:Consolas,"Courier New",monospace;font-size:13.5px}
+  pre{background:var(--code);border:1px solid var(--line);border-radius:10px;
+      padding:16px 18px;overflow:auto;font-size:13.5px;line-height:1.65}
+  pre code{border:0;background:none;padding:0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+  figure{margin:16px 0;background:var(--panel);border:1px solid var(--line);
+         border-radius:12px;padding:12px}
+  figure img{width:100%;display:block;border-radius:8px;background:#000}
+  figcaption{color:var(--muted);font-size:13.5px;margin-top:10px;text-align:center}
+  .ok{color:var(--ok);font-weight:700}
+  .warn{color:var(--warn);font-weight:700}
+  .bad{color:var(--bad);font-weight:700}
+  ul,ol{padding-left:22px}
+  li{margin:5px 0;color:#cfd8e3}
+  .note{border-left:4px solid var(--warn);background:#1d1a12;padding:12px 16px;border-radius:8px;margin:16px 0}
+  .note.okb{border-left-color:var(--ok);background:#0f1a12}
+  .note.badb{border-left-color:var(--bad);background:#1c1214}
+  .kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0}
+  .kpi div{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+  .kpi span{display:block;font-size:24px;font-weight:700;color:var(--accent)}
+  .kpi small{color:var(--muted);font-size:13px}
+  footer{margin-top:60px;border-top:1px solid var(--line);padding-top:18px;color:var(--muted);font-size:13.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>具身智能机器人仿真平台
+    <small>MuJoCo 3.2.2 · Franka Panda · 多模态感知 → 场景图 → 任务规划 → 真实物理执行 → 实验评价</small>
+  </h1>
+  <div class="badges">
+    <span class="badge">物理引擎 <b>MuJoCo 3.2.2</b></span>
+    <span class="badge">机器人 <b>Franka Panda（Menagerie 原模型）</b></span>
+    <span class="badge">成功率 <b>10/10</b></span>
+    <span class="badge">放置误差 <b>均值 8.7 mm</b></span>
+    <span class="badge">自动测试 <b>15 项通过</b></span>
+    <span class="badge">语言解析 <b>规则系统（非大模型）</b></span>
+  </div>
+</header>
+
+<div class="note okb">
+  <b>核心原则：</b>所有动作都由 MuJoCo 执行器 + <code>mj_step</code> 产生——不改物体坐标、不 teleport、不焊接、不播放预录动画。
+  失败会如实记录原因，不伪造成功。接触力是<b>仿真接触力</b>（MuJoCo 接触求解器），不是真实触觉硬件数据。
+</div>
+
+<h2>1. 演示：抓取 → 搬运 → 放置</h2>
+<figure>
+  <img src="./videos/pick_place_demo.gif" alt="抓取-放置全过程 GIF">
+  <figcaption>GIF 由 <code>scripts/record_gif.py</code> 在 <code>mj_step</code> 循环中逐帧抓取真实仿真画面生成
+    （440×248，143 帧，10 fps，画面左下角为仿真时间）。</figcaption>
+</figure>
+
+<h2>2. 一键运行（双击即可）</h2>
+<table>
+  <tr><th>文件</th><th>作用</th><th>说明</th></tr>
+  <tr><td><code>run_simulation.cmd</code></td><td><b>打开可视化窗口</b>实时演示</td><td>MuJoCo 官方被动查看器，画面与物理同步</td></tr>
+  <tr><td><code>run_experiment.cmd</code></td><td>批量实验（5 种子 × 2 次）</td><td>输出 CSV / JSONL / 图表，无窗口</td></tr>
+  <tr><td><code>run_tests.cmd</code></td><td>自动化测试</td><td>pytest 15 项，约 10 秒</td></tr>
+  <tr><td><code>README.html</code></td><td>本图文说明</td><td>双击用浏览器打开</td></tr>
+</table>
+
+<h3>环境</h3>
+<table>
+  <tr><th>项</th><th>值</th></tr>
+  <tr><td>操作系统</td><td>Windows 11 (26200)</td></tr>
+  <tr><td>Python</td><td>3.11.9，独立虚拟环境 <code>D:\oyx\embodied_ai_sim_platform.venv</code></td></tr>
+  <tr><td>物理引擎</td><td><b>MuJoCo 3.2.2</b>（锁定版本）</td></tr>
+  <tr><td>依赖</td><td>numpy 2.4.6 / scipy 1.17.1 / opencv-python 5.0.0 / matplotlib 3.11.2 / Pillow / pytest</td></tr>
+  <tr><td>硬件</td><td>i5-13490F / 15.8 GB RAM / GTX 1050 Ti 4 GB</td></tr>
+  <tr><td>机器人模型</td><td>MuJoCo Menagerie <code>franka_emika_panda</code>（原文件未修改，36.5 MB，逐文件 SHA1 校验）</td></tr>
+</table>
+
+<h2>3. 系统架构</h2>
+<pre><code>                ┌──────────────────────────────────────────────┐
+  中文指令 ───▶ │ task_planning/language.py  规则解析（非大模型）│
+                └───────────────┬──────────────────────────────┘
+                                ▼ TaskSpec(action / target / destination)
+  MuJoCo 场景 ──▶ RGB / Depth / 分割 ──▶ perception/vision.py ──▶ Detection[]
+  (mj_step)   ├─▶ 关节 / 末端 / 夹爪  ──▶ proprioception.py ──┐
+              └─▶ 接触求解器          ──▶ contact.py        ──┤
+                                                            ▼
+                                            scene_graph/graph.py   动态场景图
+                                                            ▼
+                                            multimodal_fusion/fusion.py  融合快照
+                                                            ▼
+                                            task_planning/planner.py     符号规划
+                                                            ▼
+                                            task_planning/skills.py      技能库
+                                                            ▼
+                                            feedback/executor.py   执行 + 重试
+                                                            ▼
+                                            evaluation/metrics.py  指标落盘</code></pre>
+
+<h2>4. 关键实现与实测数据</h2>
+
+<h3>4.1 场景与机器人</h3>
+<ul>
+  <li>台面高 0.40 m，机器人底座加装在 0.42 m 立柱上。</li>
+  <li>物体：红色方块 5 cm（可抓取）、蓝色目标区 14×14 cm（无碰撞标记）、黄色障碍物 7×7×10 cm。</li>
+  <li>相机：<code>cam_rgb</code>（斜前方 1280×720）、<code>cam_depth</code>（RGB-D 感知）、<code>cam_side</code>（侧视取证）。</li>
+  <li><code>scenes/robot/panda_robot.xml</code> 由 <code>scripts/build_robot_include.py</code> 生成，相对官方 <code>panda.xml</code> <b>只有两处差异</b>：
+    删除 9 维 keyframe（场景 nq=23），<code>link0</code> 加 <code>pos="0 0 0.42"</code>。</li>
+  <li>夹爪新增位置伺服 <code>gripper_left/right</code>（kp=500, kv=15, ctrl∈[0,0.04] m）；官方 actuator8 ctrl 恒置 0。</li>
+</ul>
+
+<h3>4.2 运动控制（真实物理）</h3>
+<table>
+  <tr><th>项目</th><th>做法</th><th>实测</th></tr>
+  <tr><td>逆解</td><td>阻尼最小二乘，在 scratch 数据上求解，不回写 qpos</td><td>收敛 <b>0.05 mm</b></td></tr>
+  <tr><td>伺服</td><td>每物理步 IK → 限速 ≤0.6 rad/step → 写 ctrl → mj_step，含位置/姿态外环积分</td><td>稳态误差 <b>≈2 mm</b></td></tr>
+  <tr><td>直线运动</td><td>路径切 10 mm 小段，逐段闭环</td><td>—</td></tr>
+  <tr><td>夹爪闭合</td><td>扫到首次接触 → 每步多收 0.02 mm 直到两侧指面都接触（或 8 N）→ 保持 150 步</td><td>两侧接触力 1.25 N / 5.66 N</td></tr>
+</table>
+
+<h3>4.3 感知（每条数据都标注来源）</h3>
+<table>
+  <tr><th>通道</th><th>实现</th><th>说明</th></tr>
+  <tr><td>RGB-D</td><td>MuJoCo 离屏渲染，深度为沿光轴 z 深度</td><td>反投影已按 x 右 / y 上 / 视线 −z 对齐</td></tr>
+  <tr><td>语义分割</td><td><code>enable_segmentation_rendering()</code></td><td>仅用于取物体像素区域</td></tr>
+  <tr><td>颜色</td><td>mask 内 HSV 中位色相 → 规则颜色词</td><td>规则判定，<b>无深度学习模型</b></td></tr>
+  <tr><td>类别</td><td>点云外接盒尺寸比例 → cube / box / region</td><td>规则判定</td></tr>
+  <tr><td>本体感知</td><td>qpos / qvel / actuator_force / hand 位姿</td><td>传感器真值</td></tr>
+  <tr><td>接触力</td><td><code>mj_contactForce</code> 逐接触点</td><td><b>仿真接触力，非真实触觉硬件</b>（JSON 中 source 字段写明）</td></tr>
+</table>
+<p>检测精度（与 MuJoCo 真值比较，仅用于评估）：红色方块 <b>0.69 mm</b>，蓝色目标区 <b>0.56 mm</b>，黄色障碍物 <b>0.92 mm</b>。
+候选物体先验：只检测「有自由关节的刚体」+「语义表登记的放置区域」，静态家具不进入物体列表。</p>
+
+<h3>4.4 场景图 / 融合 / 语言 / 规划</h3>
+<div class="grid">
+  <div class="card">
+    <b>场景图</b>
+    <p>节点 = 物体/区域（位姿、尺寸、类别、颜色、可抓取性、状态 free/held/placed/lost）；
+       边 = near / above / below / left_of / right_of / on；每次变更有历史记录可回溯。</p>
+  </div>
+  <div class="card">
+    <b>多模态融合</b>
+    <p>时空对齐误差直接计算并记录（不插值假装对齐）；规则融合输出 free / in_hand / placed / uncertain；
+       带冲突检测（如「图说持有但接触力为 0」）。</p>
+  </div>
+  <div class="card">
+    <b>中文解析</b>
+    <p><code>rule-based-zh-v1</code>：正则 + 词典。<code>llm=false</code>，没有大模型、没有权重、没有 API 调用。</p>
+  </div>
+  <div class="card">
+    <b>规划与执行</b>
+    <p>符号规划 + 前置条件检查 + 技能序列；抓取失败会重新感知并换 90° 朝向重试，
+       超限则返回 <code>failure_node</code> 与原因。</p>
+  </div>
+</div>
+
+<h2>5. 实验结果</h2>
+<p>配置：<code>--seeds 1 2 3 4 5 --trials 2</code>，物体与目标初始位置各 ±15 mm 随机，方块偏航 0~90°。</p>
+<div class="kpi">
+  <div><span>100%</span><small>成功率（10/10）</small></div>
+  <div><span>12.10 s</span><small>平均时长（±0.47 s）</small></div>
+  <div><span>2.245 m</span><small>平均 TCP 路程</small></div>
+  <div><span>8.7 mm</span><small>平均放置误差</small></div>
+  <div><span>0</span><small>障碍物碰撞</small></div>
+</div>
+<table>
+  <tr><th>指标</th><th>结果</th></tr>
+  <tr><td>成功率</td><td class="ok">10 / 10 = 100 %</td></tr>
+  <tr><td>平均任务时长</td><td>12.10 s（标准差 0.47 s）</td></tr>
+  <tr><td>平均 TCP 路程</td><td>2.245 m</td></tr>
+  <tr><td>夹持力峰值 / 均值</td><td>33.05 N / 13.34 N（MuJoCo 接触求解器）</td></tr>
+  <tr><td>障碍物碰撞事件</td><td>0</td></tr>
+  <tr><td>指腹蹭台面事件</td><td>2（单独统计，不计为碰撞）</td></tr>
+  <tr><td>重试次数</td><td>0</td></tr>
+  <tr><td>放置水平误差</td><td>平均 8.70 mm，最大 15.80 mm</td></tr>
+  <tr><td>放置高度误差</td><td>3.4 ~ 11.5 mm（方块落在台面上，目标区为 2.4 mm 厚无碰撞标记）</td></tr>
+</table>
+
+<div class="grid">
+  <figure><img src="./results/plots/success_rate_by_seed.png" alt="各随机种子成功率"><figcaption>各随机种子成功率</figcaption></figure>
+  <figure><img src="./results/plots/duration_by_trial.png" alt="每次试验时长"><figcaption>每次试验时长（绿=成功，红=失败）</figcaption></figure>
+  <figure><img src="./results/plots/placement_error_by_trial.png" alt="放置水平误差"><figcaption>放置水平误差</figcaption></figure>
+  <figure><img src="./results/plots/peak_grip_force.png" alt="夹持力峰值"><figcaption>夹持力峰值（仿真接触力）</figcaption></figure>
+</div>
+<p>原始数据：<code>results/experiment.csv</code>、<code>results/summary.csv</code>、<code>results/experiment.jsonl</code>、
+<code>results/experiments/&lt;run_id&gt;/trial_*.json</code>（含规划、场景图、融合快照、校验详情）。</p>
+
+<h2>6. 过程截图（真实渲染）</h2>
+<div class="grid">
+  <figure><img src="./screenshots/instr_03_transport_cam_rgb.png" alt="搬运瞬间"><figcaption>指令驱动流程：夹持方块搬运</figcaption></figure>
+  <figure><img src="./screenshots/instr_06_final_cam_rgb.png" alt="放置完成"><figcaption>放置完成：方块落在蓝色目标区</figcaption></figure>
+  <figure><img src="./screenshots/perception_detect.png" alt="视觉检测"><figcaption>RGB-D + 分割的规则检测（框 + 标签 + 置信度）</figcaption></figure>
+  <figure><img src="./screenshots/perception_seg.png" alt="语义分割"><figcaption>同帧语义分割</figcaption></figure>
+  <figure><img src="./screenshots/grasp_05_lift_cam_side.png" alt="抬升侧视"><figcaption>抓取后抬升（侧视）</figcaption></figure>
+  <figure><img src="./screenshots/perception_occlusion.png" alt="遮挡检测"><figcaption>机械臂遮挡时的检测（occluded=true）</figcaption></figure>
+</div>
+
+<h2>7. 已实现 / 部分实现 / 未实现</h2>
+
+<h3><span class="ok">✅ 已实现（均有实跑证据）</span></h3>
+<ol>
+  <li>MuJoCo 场景编译 + 三路相机渲染（RGB / 深度 / 分割）。</li>
+  <li>官方 Panda 模型的派生接入（不修改原文件）+ 夹爪位置伺服替换。</li>
+  <li>DLS 逆解（0.05 mm）、笛卡尔闭环伺服（≈2 mm）、直线插补、碰撞接触检测。</li>
+  <li>真实物理抓取-放置（两侧指面接触、抬升 125 mm、搬运 206 mm、放置误差 &lt; 16 mm）。</li>
+  <li>RGB-D + 语义分割感知，颜色/几何规则检测，位置误差 &lt; 1 mm。</li>
+  <li>本体感知与仿真接触力（每侧合力 + 稳定性判据）。</li>
+  <li>中文指令规则解析（<code>rule-based-zh-v1</code>，明确 <code>llm=false</code>）。</li>
+  <li>动态场景图（节点 / 关系 / 历史 / 状态机）。</li>
+  <li>多模态融合（时空对齐 + 规则融合 + 冲突检测）。</li>
+  <li>符号任务规划 + 前置条件检查 + 失败返回 <code>failure_node</code> + 抓取链换位姿重试。</li>
+  <li>批量实验：成功率 / 时长 / 路程 / 接触力 / 碰撞 / 重试 / 放置误差，CSV + JSONL + 图表。</li>
+  <li>演示 GIF / MP4 录制（逐 <code>mj_step</code> 抓帧）。</li>
+  <li>15 项 pytest 自动测试 + 三个一键 <code>.cmd</code> 入口。</li>
+</ol>
+
+<h3><span class="warn">🟡 部分实现（能用，但能力有限）</span></h3>
+<ol>
+  <li><b>视觉</b>：颜色 + 几何规则，只适用纯色几何体；无检测/分割网络，不适用纹理、堆叠、任意形状。</li>
+  <li><b>语言</b>：规则模板，句式有限；无同义改写、指代消解、多步指令。</li>
+  <li><b>场景图</b>：只有几何关系与状态机，无属性推理（如「能装水的容器」）。</li>
+  <li><b>融合</b>：规则阈值拼接，非注意力/概率融合；冲突只记录，不主动重感知。</li>
+  <li><b>规划</b>：纯符号单序列，无图搜索 / MCTS / 子目标学习；重试策略只有换 90° 朝向。</li>
+  <li><b>评价</b>：指标齐全，但规模小（10 trials、单场景、单物体）。</li>
+</ol>
+
+<h3><span class="bad">❌ 未实现（不要当成已有能力）</span></h3>
+<ol>
+  <li>Isaac Sim / Omniverse / Isaac Lab：<b>未安装、未配置</b>（GTX 1050 Ti 4 GB 跑不动 Isaac Sim 6.2.0）。</li>
+  <li>任何深度学习模型：无检测网络、无 VLM、无 LLM、无强化学习策略、无预训练权重。</li>
+  <li><code>NeuralPlannerBackend</code> / <code>FusionBackend</code>：只有接口与文档，调用抛 <code>NotImplementedError</code>。</li>
+  <li>ROS 2、真实机器人接口、硬件触觉传感器。</li>
+  <li>多物体堆叠抓取、动态障碍、人机协作、灵巧手。</li>
+  <li>力控抓取（仅位置伺服 + 接触判定），无阻抗/导纳控制。</li>
+</ol>
+
+<h2>8. 已知问题与限制</h2>
+<ol>
+  <li><b>MuJoCo 锁定 3.2.2</b>：本机 3.3.x / 3.17.0 <code>import mujoco</code> 报
+      <code>OSError: [WinError 1114] 动态链接库(DLL)初始化例程失败</code>。</li>
+  <li><b>底座抬到 0.42 m</b>：地面安装时目标点距基座 0.91 m，超过 Panda ≈0.855 m 臂展。</li>
+  <li>抓取点比方块中心高 <b>4 mm</b>，否则手指下缘会插入台面。</li>
+  <li>搬运高度 0.60 m：高于黄色障碍物顶面 0.52 m，同时避开臂展边界（否则伺服收敛变慢）。</li>
+  <li>夹爪为位置伺服，接触力随挤压增大（峰值 33 N），<b>不是力控</b>。</li>
+  <li>中文 Windows 下请用 Python 显式 <code>encoding='utf-8'</code> 读写文本；运行前设置 <code>PYTHONIOENCODING=utf-8</code>。</li>
+</ol>
+
+<h2>9. 复现命令</h2>
+<pre><code>$env:PYTHONIOENCODING="utf-8"
+$PY = "D:\oyx\embodied_ai_sim_platform.venv\Scripts\python.exe"
+$R  = "D:\oyx\embodied_ai_sim_platform"
+
+&amp; $PY "$R\scripts\viewer_demo.py"                        # 可视化实时演示
+&amp; $PY "$R\scripts\run_instruction.py"                    # 指令驱动全链路
+&amp; $PY "$R\scripts\run_instruction.py" --instruction "把绿色方块放到蓝色目标区域。"   # 期望 exit=1, failure_node=resolve_target
+&amp; $PY "$R\scripts\run_instruction.py" --instruction "抓起红色方块。"                 # 只抓取，保持夹持
+&amp; $PY "$R\scripts\run_grasp.py"                          # 固定抓取-放置 + 截图
+&amp; $PY "$R\scripts\test_motion.py"                        # 运动控制验证
+&amp; $PY "$R\scripts\test_perception.py"                    # 感知验证
+&amp; $PY "$R\scripts\run_experiment.py" --seeds 1 2 3 4 5 --trials 2
+&amp; $PY "$R\scripts\record_gif.py" --every 50 --gif-width 440 --colors 64 --mp4
+&amp; $PY -m pytest "$R\tests" -q</code></pre>
+
+<footer>
+  具身智能机器人仿真平台 · MuJoCo + Franka Panda · 全部截图、动画与数据由本地真实仿真产生
+</footer>
+
+</div>
+</body>
+</html>

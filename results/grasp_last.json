@@ -1,0 +1,121 @@
+{
+  "success": true,
+  "reason": "",
+  "duration": 12.766000000001066,
+  "steps": [
+    {
+      "step": "home_pose",
+      "ok": true,
+      "detail": "",
+      "t_start": 0.4,
+      "t_end": 1.9,
+      "metrics": {}
+    },
+    {
+      "step": "locate_object",
+      "ok": true,
+      "detail": "pos=[0.62, -0.16, 0.4449]",
+      "t_start": 1.9,
+      "t_end": 1.9,
+      "metrics": {
+        "x": 0.62,
+        "y": -0.16,
+        "z": 0.44492
+      }
+    },
+    {
+      "step": "open_gripper",
+      "ok": true,
+      "detail": "opening=34.5 mm",
+      "t_start": 1.9,
+      "t_end": 2.3,
+      "metrics": {}
+    },
+    {
+      "step": "pregrasp",
+      "ok": true,
+      "detail": "tcp_err=4.9 mm",
+      "t_start": 2.3,
+      "t_end": 3.652,
+      "metrics": {
+        "pos_err": 0.00489
+      }
+    },
+    {
+      "step": "descend_to_grasp",
+      "ok": true,
+      "detail": "tcp_err=1.4 mm",
+      "t_start": 3.652,
+      "t_end": 6.212,
+      "metrics": {
+        "pos_err": 0.00139
+      }
+    },
+    {
+      "step": "close_gripper",
+      "ok": true,
+      "detail": "contact=True opening=24.9 mm peak_force=0.69 N both_fingers=True",
+      "t_start": 6.212,
+      "t_end": 7.12,
+      "metrics": {
+        "peak_force": 0.69478
+      }
+    },
+    {
+      "step": "lift",
+      "ok": true,
+      "detail": "dz=0.124 m, finger_opening=24.6 mm",
+      "t_start": 7.12,
+      "t_end": 8.072,
+      "metrics": {
+        "dz": 0.12433
+      }
+    },
+    {
+      "step": "transport",
+      "ok": true,
+      "detail": "object_travel=206 mm",
+      "t_start": 8.072,
+      "t_end": 10.428,
+      "metrics": {
+        "travel": 0.20602
+      }
+    },
+    {
+      "step": "descend_to_place",
+      "ok": true,
+      "detail": "",
+      "t_start": 10.428,
+      "t_end": 11.424,
+      "metrics": {}
+    },
+    {
+      "step": "release",
+      "ok": true,
+      "detail": "opening=34.5 mm",
+      "t_start": 11.424,
+      "t_end": 13.166,
+      "metrics": {}
+    },
+    {
+      "step": "check_placement",
+      "ok": true,
+      "detail": "xy_dist=14.8 mm, z_err=1.3 mm, speed=0.0000 m/s",
+      "t_start": 13.166,
+      "t_end": 13.166,
+      "metrics": {
+        "xy_dist": 0.0148,
+        "z_err": 0.00128
+      }
+    }
+  ],
+  "peak_contact_force": 0.6947848266662812,
+  "contact_steps": 453,
+  "collisions": [],
+  "collision_count": 0,
+  "final_object_pos": [
+    0.7948023685171565,
+    -0.10005613051705499,
+    0.4449198258110716
+  ]
+}

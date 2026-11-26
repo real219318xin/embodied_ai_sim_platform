@@ -1,0 +1,151 @@
+<mujoco model="embodied_panda_tabletop">
+  <!--
+    具身智能仿真平台 — 主实验场景
+    ------------------------------------------------------------------
+    机器人 : Franka Emika Panda（官方 MuJoCo Menagerie 模型，未做任何修改）
+    模型源 : assets/mujoco_menagerie/franka_emika_panda/panda.xml
+             （场景实际 include 的是由官方文件派生的 scenes/robot/panda_robot.xml，
+               唯一差异是移除了与自由物体 nq 不兼容的 <keyframe home>；
+               生成脚本 scripts/build_robot_include.py，来源 SHA256 见 .manifest.json）
+    场景   : 地面 + 实验台 + 红色方块 + 蓝色目标区 + 黄色障碍物
+    相机   : cam_rgb（斜前方全局视角） / cam_depth（正上方俯视，用于深度与分割）
+    说明   : 机器人底座固定于世界原点（panda.xml 的 link0 无关节），
+             实验台台面高度 0.42 m，位于机器人正前方。
+  -->
+  <include file="robot/panda_robot.xml"/>
+
+  <!--
+    官方 panda.xml 的 meshdir="assets" 是相对其自身目录的；被 include 后
+    MuJoCo 一律相对主文件（scenes/）解析，故在此覆盖为官方 assets 目录。
+    只覆盖编译期路径，不修改官方文件内容。
+  -->
+  <compiler angle="radian" autolimits="true"
+            meshdir="../assets/mujoco_menagerie/franka_emika_panda/assets"
+            texturedir="../assets/mujoco_menagerie/franka_emika_panda/assets"/>
+
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast"
+          cone="elliptic" impratio="10" iterations="80" tolerance="1e-10"/>
+
+  <visual>
+    <headlight diffuse="0.5 0.5 0.5" ambient="0.30 0.30 0.30" specular="0.05 0.05 0.05"/>
+    <rgba haze="0.16 0.24 0.33 1"/>
+    <global azimuth="135" elevation="-24" offwidth="1280" offheight="720"/>
+    <quality shadowsize="4096" offsamples="4"/>
+    <map znear="0.01" zfar="15"/>
+  </visual>
+
+  <asset>
+    <texture name="skybox" type="skybox" builtin="gradient"
+             rgb1="0.34 0.50 0.66" rgb2="0.015 0.015 0.02" width="512" height="3072"/>
+    <texture name="floor_tex" type="2d" builtin="checker"
+             rgb1="0.60 0.62 0.65" rgb2="0.45 0.47 0.50"
+             mark="edge" markrgb="0.78 0.78 0.80" width="512" height="512"/>
+    <material name="floor_mat" texture="floor_tex" texrepeat="12 12" texuniform="true"
+              reflectance="0.06" specular="0.05" shininess="0.05"/>
+    <material name="bench_top" rgba="0.42 0.43 0.45 1" specular="0.25" shininess="0.25"/>
+    <material name="bench_leg" rgba="0.26 0.27 0.29 1" specular="0.35" shininess="0.35"/>
+    <material name="mat_red" rgba="0.86 0.10 0.09 1" specular="0.30" shininess="0.40"/>
+    <material name="mat_blue" rgba="0.10 0.36 0.86 1" specular="0.20" shininess="0.30"/>
+    <material name="mat_yellow" rgba="0.95 0.76 0.10 1" specular="0.25" shininess="0.35"/>
+  </asset>
+
+  <worldbody>
+    <!-- ==================== 光照 ==================== -->
+    <light name="key_light" pos="0.35 -0.75 1.95" dir="-0.18 0.34 -1"
+           directional="true" diffuse="0.72 0.72 0.70" specular="0.18 0.18 0.18"
+           castshadow="true"/>
+    <light name="fill_light" pos="1.30 1.10 1.55" dir="-0.55 -0.45 -0.85"
+           diffuse="0.30 0.31 0.34" specular="0.05 0.05 0.05" castshadow="false"/>
+    <light name="rim_light" pos="-0.60 0.35 1.20" dir="0.45 -0.25 -0.85"
+           diffuse="0.18 0.18 0.20" castshadow="false"/>
+
+    <!-- ==================== 地面 ==================== -->
+    <geom name="floor" type="plane" size="8 8 0.05" material="floor_mat"
+          condim="3" friction="1.0 0.015 0.001" pos="0 0 0"/>
+
+    <!-- ==================== 实验台（静态） ==================== -->
+    <body name="bench" pos="0 0 0">
+      <geom name="bench_top" type="box" size="0.42 0.40 0.02" pos="0.62 0 0.40"
+            material="bench_top" mass="14" condim="3" friction="1.0 0.02 0.001"/>
+      <geom name="bench_leg_fl" type="box" size="0.022 0.022 0.19" pos="0.26 -0.34 0.19"
+            material="bench_leg" mass="0.6"/>
+      <geom name="bench_leg_fr" type="box" size="0.022 0.022 0.19" pos="0.26 0.34 0.19"
+            material="bench_leg" mass="0.6"/>
+      <geom name="bench_leg_bl" type="box" size="0.022 0.022 0.19" pos="0.98 -0.34 0.19"
+            material="bench_leg" mass="0.6"/>
+      <geom name="bench_leg_br" type="box" size="0.022 0.022 0.19" pos="0.98 0.34 0.19"
+            material="bench_leg" mass="0.6"/>
+      <geom name="bench_brace_f" type="box" size="0.34 0.012 0.012" pos="0.62 -0.34 0.30"
+            material="bench_leg" mass="0.3"/>
+      <geom name="bench_brace_b" type="box" size="0.34 0.012 0.012" pos="0.62 0.34 0.30"
+            material="bench_leg" mass="0.3"/>
+    </body>
+
+    <!-- ==================== 机器人底座支撑柱（静态） ==================== -->
+    <body name="pedestal" pos="0 0 0">
+      <geom name="pedestal_column" type="box" size="0.115 0.115 0.21" pos="0 0 0.21"
+            material="bench_leg" mass="25" condim="3" friction="0.9 0.02 0.001"/>
+      <geom name="pedestal_base" type="box" size="0.18 0.18 0.012" pos="0 0 0.012"
+            material="bench_leg" mass="8"/>
+    </body>
+
+    <!-- ==================== 红色方块（可抓取） ==================== -->
+    <body name="red_cube" pos="0.62 -0.16 0.445">
+      <freejoint name="red_cube_free"/>
+      <geom name="red_cube_geom" type="box" size="0.025 0.025 0.025" mass="0.08"
+            material="mat_red" condim="4" friction="1.5 0.02 0.002"
+            solref="0.004 1" solimp="0.90 0.97 0.001"
+            rgba="0.86 0.10 0.09 1"/>
+    </body>
+
+    <!-- ==================== 蓝色目标区域（仅视觉标记，不参与碰撞） ==================== -->
+    <body name="target_zone" pos="0.78 -0.10 0.4212">
+      <geom name="target_zone_geom" type="box" size="0.07 0.07 0.0012" mass="0.001"
+            material="mat_blue" contype="0" conaffinity="0"
+            rgba="0.10 0.36 0.86 0.95"/>
+    </body>
+
+    <!-- ==================== 黄色障碍物（路径规划实验用） ==================== -->
+    <body name="yellow_obstacle" pos="0.72 0.14 0.47">
+      <freejoint name="yellow_obstacle_free"/>
+      <geom name="yellow_obstacle_geom" type="box" size="0.035 0.035 0.05" mass="0.12"
+            material="mat_yellow" condim="3" friction="1.0 0.02 0.001"
+            rgba="0.95 0.76 0.10 1"/>
+    </body>
+
+    <!-- ==================== 相机 ==================== -->
+    <camera name="cam_rgb" mode="fixed" pos="0.02 -1.75 1.40"
+            xyaxes="0.9571 -0.2899 0.0000 0.1010 0.3336 0.9373" fovy="45"/>
+    <camera name="cam_depth" mode="fixed" pos="1.45 -0.70 1.45"
+            xyaxes="0.6337 0.7735 0.0000 -0.5245 0.4298 0.7350" fovy="45"/>
+    <camera name="cam_side" mode="fixed" pos="1.40 0.95 1.20"
+            xyaxes="-0.7649 0.6441 0.0000 -0.2987 -0.3547 0.8860" fovy="45"/>
+  </worldbody>
+
+  <keyframe>
+    <!-- 场景初始状态：Panda 官方 home 姿态 + 双指张开 + 物体置于桌面上方 -->
+    <key name="scene_home"
+         qpos="0 0 0 -1.57079 0 1.57079 -0.7853 0.04 0.04
+               0.62 -0.16 0.445 1 0 0 0
+               0.72 0.14 0.47 1 0 0 0"
+         ctrl="0 0 0 -1.57079 0 1.57079 -0.7853 0 0.038 0.038"/>
+  </keyframe>
+
+  <!--
+    夹爪控制扩展（场景侧扩展，官方 panda.xml 未修改）
+    ------------------------------------------------------------------
+    实测：官方 actuator8 是"力源"，ctrl=255 时输出约 4 N 且严重欠阻尼
+          （从 40 mm 张开态会过冲到 0 甚至越过限位），无法作为稳定的
+          位置控制接口，也无法主动张开，无法支撑可重复抓取实验。
+    做法：在两根手指的滑动关节上各加一个带阻尼的位置伺服
+          （kp=500, kv=15, ctrl ∈ [0, 0.04] m），官方 actuator8 的 ctrl
+          恒置 0（零力）保留但不再参与控制。
+          两指仍由官方 <equality> 约束保持同步。
+  -->
+  <actuator>
+    <position name="gripper_left" joint="finger_joint1" kp="500" kv="15"
+              ctrlrange="0 0.04" forcerange="-25 25"/>
+    <position name="gripper_right" joint="finger_joint2" kp="500" kv="15"
+              ctrlrange="0 0.04" forcerange="-25 25"/>
+  </actuator>
+</mujoco>

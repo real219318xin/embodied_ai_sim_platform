@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# 虚拟环境
+.venv/
+venv/
+env/
+ENV/
+embodied_ai_sim_platform.venv/
+
+# 测试缓存
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# MuJoCo 运行时缓存 / 日志
+*.log
+mjkey.txt
+mujoco.log
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+*.lnk
+.vscode/
+.idea/
+*.swp
+*~
+
+# 临时输出（保留 results/ 的正式实验数据）
+results/net/
+/tmp/
+*.tmp

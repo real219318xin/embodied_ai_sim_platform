@@ -1,0 +1,20 @@
+# 默认不做换行符转换，保证 MuJoCo 模型与实验数据逐字节一致
+* text=auto eol=lf
+
+# Windows 批处理必须是 CRLF，否则双击运行会异常
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# 模型 / 网格 / 数据文件不做任何文本处理
+*.obj -text
+*.stl -text
+*.msh -text
+*.png -text
+*.jpg -text
+*.gif -text
+*.mp4 -text
+*.npy -text
+*.npz -text
+*.pkl -text
+*.docx -text

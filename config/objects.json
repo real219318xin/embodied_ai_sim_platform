@@ -1,0 +1,27 @@
+{
+  "red_cube_geom": {
+    "cn_name": "红色方块",
+    "role": "manipulation_target",
+    "graspable": true
+  },
+  "yellow_obstacle_geom": {
+    "cn_name": "黄色障碍物",
+    "role": "obstacle",
+    "graspable": true
+  },
+  "target_zone_geom": {
+    "cn_name": "蓝色目标区域",
+    "role": "placement_region",
+    "graspable": false
+  },
+  "bench_top": {
+    "cn_name": "实验台面",
+    "role": "support_surface",
+    "graspable": false
+  },
+  "floor": {
+    "cn_name": "地面",
+    "role": "support_surface",
+    "graspable": false
+  }
+}

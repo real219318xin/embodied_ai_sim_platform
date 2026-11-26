@@ -1,0 +1,1001 @@
+{
+  "success": true,
+  "reason": "",
+  "failed_node": null,
+  "retries": 0,
+  "duration": 11.866,
+  "records": [
+    {
+      "node": "move_above_target",
+      "skill": "move_above",
+      "ok": true,
+      "detail": "",
+      "attempts": 1,
+      "metrics": {
+        "pos_err": 0.00292
+      },
+      "t": 2.776
+    },
+    {
+      "node": "descend_to_grasp",
+      "skill": "descend_to",
+      "ok": true,
+      "detail": "",
+      "attempts": 1,
+      "metrics": {
+        "pos_err": 0.00147
+      },
+      "t": 5.176
+    },
+    {
+      "node": "close_gripper",
+      "skill": "close_gripper",
+      "ok": true,
+      "detail": "",
+      "attempts": 1,
+      "metrics": {
+        "peak_force": 8.70265,
+        "opening": 0.0316,
+        "both_fingers": 0.0
+      },
+      "t": 5.55
+    },
+    {
+      "node": "lift_object",
+      "skill": "lift_by",
+      "ok": true,
+      "detail": "",
+      "attempts": 1,
+      "metrics": {
+        "object_dz": 0.12802,
+        "gripper_opening": 0.02781
+      },
+      "t": 6.556
+    },
+    {
+      "node": "transport_to_region",
+      "skill": "transport_xy",
+      "ok": true,
+      "detail": "",
+      "attempts": 1,
+      "metrics": {
+        "xy_distance": 0.16283
+      },
+      "t": 7.614
+    },
+    {
+      "node": "descend_to_place",
+      "skill": "place_at",
+      "ok": true,
+      "detail": "",
+      "attempts": 1,
+      "metrics": {},
+      "t": 8.938
+    },
+    {
+      "node": "release",
+      "skill": "release_and_retreat",
+      "ok": true,
+      "detail": "",
+      "attempts": 1,
+      "metrics": {
+        "opening": 0.03455
+      },
+      "t": 10.606
+    }
+  ],
+  "recovery_log": [],
+  "fusion_snapshots": [],
+  "plan": {
+    "planner": "symbolic-planner-v1 (no neural/MCTS/RAG)",
+    "ok": true,
+    "failure_node": null,
+    "reason": "",
+    "recovery": [],
+    "target": {
+      "node_id": "obj:red_cube",
+      "name": "red_cube",
+      "label": "red_cube",
+      "category": "cube",
+      "color": "red",
+      "position": [
+        0.6107,
+        -0.1529,
+        0.4398
+      ],
+      "size": [
+        0.0662,
+        0.0616,
+        0.0616
+      ],
+      "top_z": 0.4706,
+      "quat": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "graspable": true,
+      "occluded": false,
+      "confidence": 0.944,
+      "state": "free",
+      "attributes": {
+        "mean_rgb": [
+          214,
+          36,
+          32
+        ],
+        "role": "manipulation_target",
+        "cn_name": "红色方块",
+        "geom_name": "red_cube_geom"
+      },
+      "first_seen": 0.64,
+      "last_seen": 0.64,
+      "updates": 1,
+      "pose_source": "vision"
+    },
+    "destination": {
+      "node_id": "obj:target_zone",
+      "name": "target_zone",
+      "label": "blue_target_area",
+      "category": "region",
+      "color": "blue",
+      "position": [
+        0.7674,
+        -0.0979,
+        0.4211
+      ],
+      "size": [
+        0.1398,
+        0.1398,
+        0.004
+      ],
+      "top_z": 0.4231,
+      "quat": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "graspable": false,
+      "occluded": false,
+      "confidence": 0.877,
+      "state": "free",
+      "attributes": {
+        "mean_rgb": [
+          45,
+          154,
+          253
+        ],
+        "role": "placement_region",
+        "cn_name": "蓝色目标区域",
+        "geom_name": "target_zone_geom"
+      },
+      "first_seen": 0.64,
+      "last_seen": 0.64,
+      "updates": 1,
+      "pose_source": "vision"
+    },
+    "nodes": [
+      {
+        "node": "open_gripper",
+        "skill": "open_gripper",
+        "params": {
+          "width": 0.038
+        },
+        "preconditions": [
+          "gripper_available"
+        ],
+        "status": "pending",
+        "detail": ""
+      },
+      {
+        "node": "move_above_target",
+        "skill": "move_above",
+        "params": {
+          "pos": [
+            0.6106640502621472,
+            -0.15294053625834314,
+            0.43980265495589876
+          ],
+          "dz": 0.14,
+          "allowed": "red_cube"
+        },
+        "preconditions": [
+          "target_exists",
+          "target_reachable"
+        ],
+        "status": "pending",
+        "detail": ""
+      },
+      {
+        "node": "descend_to_grasp",
+        "skill": "descend_to",
+        "params": {
+          "pos": [
+            0.6106640502621472,
+            -0.15294053625834314,
+            0.44380265495589877
+          ],
+          "allowed": "red_cube"
+        },
+        "preconditions": [
+          "gripper_opened"
+        ],
+        "status": "pending",
+        "detail": ""
+      },
+      {
+        "node": "close_gripper",
+        "skill": "close_gripper",
+        "params": {
+          "object": "red_cube"
+        },
+        "preconditions": [
+          "at_grasp_pose"
+        ],
+        "status": "pending",
+        "detail": ""
+      },
+      {
+        "node": "lift_object",
+        "skill": "lift_by",
+        "params": {
+          "object": "red_cube",
+          "dz": 0.12
+        },
+        "preconditions": [
+          "grasp_contact_confirmed"
+        ],
+        "status": "pending",
+        "detail": ""
+      },
+      {
+        "node": "transport_to_region",
+        "skill": "transport_xy",
+        "params": {
+          "xy": [
+            0.767394696595127,
+            -0.09789965468627904
+          ],
+          "object": "red_cube"
+        },
+        "preconditions": [
+          "object_held",
+          "safe_height_clear"
+        ],
+        "status": "pending",
+        "detail": ""
+      },
+      {
+        "node": "descend_to_place",
+        "skill": "place_at",
+        "params": {
+          "xy": [
+            0.767394696595127,
+            -0.09789965468627904
+          ],
+          "height": 0.4558768738691521,
+          "object": "red_cube"
+        },
+        "preconditions": [
+          "above_destination"
+        ],
+        "status": "pending",
+        "detail": ""
+      },
+      {
+        "node": "release",
+        "skill": "release_and_retreat",
+        "params": {
+          "object": "red_cube"
+        },
+        "preconditions": [
+          "at_place_height"
+        ],
+        "status": "pending",
+        "detail": ""
+      },
+      {
+        "node": "verify_task",
+        "skill": "verify",
+        "params": {
+          "object": "red_cube",
+          "destination": "target_zone"
+        },
+        "preconditions": [
+          "task_executed"
+        ],
+        "status": "pending",
+        "detail": ""
+      }
+    ]
+  },
+  "spec": {
+    "instruction": "抓起桌面上的红色方块，放到蓝色目标区域。",
+    "action": "pick",
+    "target": {
+      "text": "抓起红色方块",
+      "color": "red",
+      "category": "cube"
+    },
+    "destination": {
+      "text": "蓝色目标区域",
+      "color": "blue",
+      "category": "target_area"
+    },
+    "constraints": [],
+    "needs_place": true,
+    "parser": "rule-based-zh-v1",
+    "llm": false,
+    "confidence": 1.0,
+    "warnings": [],
+    "unmatched": []
+  },
+  "scene_graph": {
+    "nodes": [
+      {
+        "node_id": "obj:target_zone",
+        "name": "target_zone",
+        "label": "blue_target_area",
+        "category": "region",
+        "color": "blue",
+        "position": [
+          0.7674,
+          -0.0979,
+          0.4211
+        ],
+        "size": [
+          0.1398,
+          0.1398,
+          0.004
+        ],
+        "top_z": 0.4231,
+        "quat": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "graspable": false,
+        "occluded": false,
+        "confidence": 0.84,
+        "state": "free",
+        "attributes": {
+          "mean_rgb": [
+            46,
+            153,
+            252
+          ],
+          "role": "placement_region",
+          "cn_name": "蓝色目标区域",
+          "geom_name": "target_zone_geom"
+        },
+        "first_seen": 0.64,
+        "last_seen": 12.506,
+        "updates": 2,
+        "pose_source": "vision"
+      },
+      {
+        "node_id": "obj:yellow_obstacle",
+        "name": "yellow_obstacle",
+        "label": "yellow_box",
+        "category": "box",
+        "color": "yellow",
+        "position": [
+          0.72,
+          0.1399,
+          0.4707
+        ],
+        "size": [
+          0.0709,
+          0.0707,
+          0.0996
+        ],
+        "top_z": 0.5205,
+        "quat": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "graspable": true,
+        "occluded": false,
+        "confidence": 0.928,
+        "state": "free",
+        "attributes": {
+          "mean_rgb": [
+            208,
+            182,
+            27
+          ],
+          "role": "obstacle",
+          "cn_name": "黄色障碍物",
+          "geom_name": "yellow_obstacle_geom"
+        },
+        "first_seen": 0.64,
+        "last_seen": 12.506,
+        "updates": 2,
+        "pose_source": "vision"
+      },
+      {
+        "node_id": "obj:red_cube",
+        "name": "red_cube",
+        "label": "red_cube",
+        "category": "cube",
+        "color": "red",
+        "position": [
+          0.7793,
+          -0.1012,
+          0.4419
+        ],
+        "size": [
+          0.0574,
+          0.058,
+          0.0574
+        ],
+        "top_z": 0.4706,
+        "quat": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "graspable": true,
+        "occluded": false,
+        "confidence": 0.928,
+        "state": "placed",
+        "attributes": {
+          "mean_rgb": [
+            202,
+            32,
+            32
+          ],
+          "role": "manipulation_target",
+          "cn_name": "红色方块",
+          "geom_name": "red_cube_geom"
+        },
+        "first_seen": 0.64,
+        "last_seen": 12.506,
+        "updates": 2,
+        "pose_source": "vision"
+      }
+    ],
+    "edges": [
+      {
+        "source": "target_zone",
+        "target": "yellow_obstacle",
+        "relation": "below",
+        "value": 0.0496
+      },
+      {
+        "source": "target_zone",
+        "target": "yellow_obstacle",
+        "relation": "right_of",
+        "value": 0.2378
+      },
+      {
+        "source": "target_zone",
+        "target": "red_cube",
+        "relation": "near",
+        "value": 0.0242
+      },
+      {
+        "source": "yellow_obstacle",
+        "target": "target_zone",
+        "relation": "above",
+        "value": 0.0496
+      },
+      {
+        "source": "yellow_obstacle",
+        "target": "target_zone",
+        "relation": "left_of",
+        "value": 0.2378
+      },
+      {
+        "source": "yellow_obstacle",
+        "target": "red_cube",
+        "relation": "left_of",
+        "value": 0.2411
+      },
+      {
+        "source": "red_cube",
+        "target": "target_zone",
+        "relation": "near",
+        "value": 0.0242
+      },
+      {
+        "source": "red_cube",
+        "target": "target_zone",
+        "relation": "on",
+        "value": 0.0099
+      },
+      {
+        "source": "red_cube",
+        "target": "yellow_obstacle",
+        "relation": "right_of",
+        "value": 0.2411
+      }
+    ],
+    "history": [
+      {
+        "t": 0.6400000000000005,
+        "node": "target_zone",
+        "change": "appear",
+        "position": [
+          0.767394696595127,
+          -0.09789965468627904,
+          0.4210833331183208
+        ]
+      },
+      {
+        "t": 0.6400000000000005,
+        "node": "yellow_obstacle",
+        "change": "appear",
+        "position": [
+          0.7199728174132836,
+          0.1399280587941456,
+          0.47070351256084647
+        ]
+      },
+      {
+        "t": 0.6400000000000005,
+        "node": "red_cube",
+        "change": "appear",
+        "position": [
+          0.6106640502621472,
+          -0.15294053625834314,
+          0.43980265495589876
+        ]
+      },
+      {
+        "t": 6.5559999999995,
+        "node": "red_cube",
+        "change": "state",
+        "state": "held"
+      },
+      {
+        "t": 12.506000000000846,
+        "node": "red_cube",
+        "change": "move",
+        "from": [
+          0.6106640502621472,
+          -0.15294053625834314,
+          0.43980265495589876
+        ],
+        "to": [
+          0.7792671031318068,
+          -0.10120510522351234,
+          0.4418555810902875
+        ],
+        "distance": 0.17637
+      },
+      {
+        "t": 12.506000000000846,
+        "node": "red_cube",
+        "change": "state",
+        "state": "placed"
+      }
+    ],
+    "n_nodes": 3,
+    "n_edges": 9
+  },
+  "perception": {
+    "frames": [
+      {
+        "t": 0.64,
+        "frame": {
+          "camera": {
+            "camera": "cam_depth",
+            "width": 640,
+            "height": 480,
+            "fx": 579.411,
+            "fy": 579.411,
+            "cx": 319.5,
+            "cy": 239.5,
+            "pos_world": [
+              1.45,
+              -0.7,
+              1.45
+            ]
+          },
+          "timestamp": 0.64,
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_valid_ratio": 1.0,
+          "depth_range_m": [
+            1.0349,
+            3.8692
+          ]
+        },
+        "detections": [
+          {
+            "label": "blue_target_area",
+            "category": "region",
+            "color": "blue",
+            "geom_id": 92,
+            "geom_name": "target_zone_geom",
+            "body_name": "target_zone",
+            "confidence": 0.877,
+            "bbox_uv": [
+              292,
+              269,
+              375,
+              331
+            ],
+            "n_pixels": 2680,
+            "center_world": [
+              0.7674,
+              -0.0979,
+              0.4211
+            ],
+            "size_world": [
+              0.1398,
+              0.1398,
+              0.004
+            ],
+            "top_z": 0.4231,
+            "occluded": false,
+            "occlusion_ratio": 0.0,
+            "graspable": false,
+            "attributes": {
+              "mean_rgb": [
+                45,
+                154,
+                253
+              ],
+              "role": "placement_region",
+              "cn_name": "蓝色目标区域"
+            },
+            "source": "vision: RGB-D + semantic segmentation (rule-based)"
+          },
+          {
+            "label": "yellow_box",
+            "category": "box",
+            "color": "yellow",
+            "geom_id": 93,
+            "geom_name": "yellow_obstacle_geom",
+            "body_name": "yellow_obstacle",
+            "confidence": 0.928,
+            "bbox_uv": [
+              373,
+              203,
+              414,
+              257
+            ],
+            "n_pixels": 1648,
+            "center_world": [
+              0.72,
+              0.1399,
+              0.4707
+            ],
+            "size_world": [
+              0.0709,
+              0.0707,
+              0.0996
+            ],
+            "top_z": 0.5205,
+            "occluded": false,
+            "occlusion_ratio": 0.0,
+            "graspable": true,
+            "attributes": {
+              "mean_rgb": [
+                207,
+                182,
+                26
+              ],
+              "role": "obstacle",
+              "cn_name": "黄色障碍物"
+            },
+            "source": "vision: RGB-D + semantic segmentation (rule-based)"
+          },
+          {
+            "label": "red_cube",
+            "category": "cube",
+            "color": "red",
+            "geom_id": 91,
+            "geom_name": "red_cube_geom",
+            "body_name": "red_cube",
+            "confidence": 0.944,
+            "bbox_uv": [
+              263,
+              250,
+              288,
+              281
+            ],
+            "n_pixels": 644,
+            "center_world": [
+              0.6107,
+              -0.1529,
+              0.4398
+            ],
+            "size_world": [
+              0.0662,
+              0.0616,
+              0.0616
+            ],
+            "top_z": 0.4706,
+            "occluded": false,
+            "occlusion_ratio": 0.0,
+            "graspable": true,
+            "attributes": {
+              "mean_rgb": [
+                214,
+                36,
+                32
+              ],
+              "role": "manipulation_target",
+              "cn_name": "红色方块"
+            },
+            "source": "vision: RGB-D + semantic segmentation (rule-based)"
+          }
+        ],
+        "graph_changes": [
+          {
+            "t": 0.6400000000000005,
+            "node": "target_zone",
+            "change": "appear",
+            "position": [
+              0.767394696595127,
+              -0.09789965468627904,
+              0.4210833331183208
+            ]
+          },
+          {
+            "t": 0.6400000000000005,
+            "node": "yellow_obstacle",
+            "change": "appear",
+            "position": [
+              0.7199728174132836,
+              0.1399280587941456,
+              0.47070351256084647
+            ]
+          },
+          {
+            "t": 0.6400000000000005,
+            "node": "red_cube",
+            "change": "appear",
+            "position": [
+              0.6106640502621472,
+              -0.15294053625834314,
+              0.43980265495589876
+            ]
+          }
+        ]
+      },
+      {
+        "t": 12.506,
+        "frame": {
+          "camera": {
+            "camera": "cam_depth",
+            "width": 640,
+            "height": 480,
+            "fx": 579.411,
+            "fy": 579.411,
+            "cx": 319.5,
+            "cy": 239.5,
+            "pos_world": [
+              1.45,
+              -0.7,
+              1.45
+            ]
+          },
+          "timestamp": 12.506,
+          "rgb_shape": [
+            480,
+            640,
+            3
+          ],
+          "depth_valid_ratio": 1.0,
+          "depth_range_m": [
+            1.0332,
+            3.8692
+          ]
+        },
+        "detections": [
+          {
+            "label": "blue_target_area",
+            "category": "region",
+            "color": "blue",
+            "geom_id": 92,
+            "geom_name": "target_zone_geom",
+            "body_name": "target_zone",
+            "confidence": 0.84,
+            "bbox_uv": [
+              292,
+              269,
+              375,
+              331
+            ],
+            "n_pixels": 1911,
+            "center_world": [
+              0.7674,
+              -0.0979,
+              0.4211
+            ],
+            "size_world": [
+              0.1398,
+              0.1398,
+              0.004
+            ],
+            "top_z": 0.4231,
+            "occluded": false,
+            "occlusion_ratio": 0.0,
+            "graspable": false,
+            "attributes": {
+              "mean_rgb": [
+                46,
+                153,
+                252
+              ],
+              "role": "placement_region",
+              "cn_name": "蓝色目标区域"
+            },
+            "source": "vision: RGB-D + semantic segmentation (rule-based)"
+          },
+          {
+            "label": "yellow_box",
+            "category": "box",
+            "color": "yellow",
+            "geom_id": 93,
+            "geom_name": "yellow_obstacle_geom",
+            "body_name": "yellow_obstacle",
+            "confidence": 0.928,
+            "bbox_uv": [
+              373,
+              203,
+              414,
+              257
+            ],
+            "n_pixels": 1648,
+            "center_world": [
+              0.72,
+              0.1399,
+              0.4707
+            ],
+            "size_world": [
+              0.0709,
+              0.0707,
+              0.0996
+            ],
+            "top_z": 0.5205,
+            "occluded": false,
+            "occlusion_ratio": 0.0,
+            "graspable": true,
+            "attributes": {
+              "mean_rgb": [
+                208,
+                182,
+                27
+              ],
+              "role": "obstacle",
+              "cn_name": "黄色障碍物"
+            },
+            "source": "vision: RGB-D + semantic segmentation (rule-based)"
+          },
+          {
+            "label": "red_cube",
+            "category": "cube",
+            "color": "red",
+            "geom_id": 91,
+            "geom_name": "red_cube_geom",
+            "body_name": "red_cube",
+            "confidence": 0.928,
+            "bbox_uv": [
+              322,
+              278,
+              351,
+              313
+            ],
+            "n_pixels": 769,
+            "center_world": [
+              0.7793,
+              -0.1012,
+              0.4419
+            ],
+            "size_world": [
+              0.0574,
+              0.058,
+              0.0574
+            ],
+            "top_z": 0.4706,
+            "occluded": false,
+            "occlusion_ratio": 0.0,
+            "graspable": true,
+            "attributes": {
+              "mean_rgb": [
+                202,
+                32,
+                32
+              ],
+              "role": "manipulation_target",
+              "cn_name": "红色方块"
+            },
+            "source": "vision: RGB-D + semantic segmentation (rule-based)"
+          }
+        ],
+        "graph_changes": [
+          {
+            "t": 12.506000000000846,
+            "node": "red_cube",
+            "change": "move",
+            "from": [
+              0.6106640502621472,
+              -0.15294053625834314,
+              0.43980265495589876
+            ],
+            "to": [
+              0.7792671031318068,
+              -0.10120510522351234,
+              0.4418555810902875
+            ],
+            "distance": 0.17637
+          }
+        ]
+      }
+    ]
+  },
+  "verify": {
+    "object": "red_cube",
+    "final_position": [
+      0.7791,
+      -0.1,
+      0.4449
+    ],
+    "object_speed": 1.0895230076186003e-14,
+    "source": "sim physics state (MuJoCo qpos)",
+    "ok": true,
+    "xy_error_m": 0.01192386175714688,
+    "z_error_m": 0.008945818104939884,
+    "zone_surface_z": 0.4230721031651845,
+    "destination": "target_zone",
+    "reason": ""
+  },
+  "instruction": "抓起桌面上的红色方块，放到蓝色目标区域。",
+  "scene_graph_text": "blue_target_area(blue) pos=(0.767,-0.098,0.421) size=(140x140x4mm) free/可见\nred_cube(red) pos=(0.779,-0.101,0.442) size=(57x58x57mm) placed/可见\nyellow_box(yellow) pos=(0.720,0.140,0.471) size=(71x71x100mm) free/可见",
+  "randomization": {
+    "object_xy": [
+      0.6119,
+      -0.1519
+    ],
+    "target_xy": [
+      0.767,
+      -0.0975
+    ],
+    "object_yaw_deg": 69.2,
+    "jitter_m": 0.015,
+    "seed": 5,
+    "note": "初始条件在动作开始前设置；动作过程全部由 actuator 驱动"
+  },
+  "metrics": {
+    "run_id": "20261030_173712_exp",
+    "trial": 1,
+    "seed": 5,
+    "success": 1,
+    "duration_s": 11.866,
+    "tcp_path_length_m": 2.2225,
+    "peak_grip_force_n": 8.765,
+    "collision_events": 0,
+    "collision_bodies": "",
+    "table_contact_events": 0,
+    "retries": 0,
+    "xy_error_mm": 11.92,
+    "z_error_mm": 8.95,
+    "failed_node": null,
+    "reason": "",
+    "initial_object_xy": [
+      0.6119,
+      -0.1519
+    ],
+    "initial_target_xy": [
+      0.767,
+      -0.0975
+    ],
+    "n_plan_nodes": 9,
+    "instruction": "抓起桌面上的红色方块，放到蓝色目标区域。"
+  },
+  "wall_time_s": 2.85
+}
